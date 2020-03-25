@@ -1,26 +1,47 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import mapboxgl from "mapbox-gl";
+import "./App.css";
+mapboxgl.accessToken =
+  "pk.eyJ1IjoiaXRzbWVnYW5lc2hjc2UiLCJhIjoiY2s4N2hxZTZlMDF2dTNubjNwMDF1YWtwZyJ9.Ft-6KDfMJOAHwZKW1ARx7g";
+export class App extends Component {
+  constructor(props) {
+    super(props);
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    this.state = {
+      lng: 5,
+      lat: 34,
+      zoom: 2
+    };
+  }
+  componentDidMount() {
+    const map = new mapboxgl.Map({
+      container: this.mapContainer,
+      style: "mapbox://styles/mapbox/streets-v11",
+      center: [this.state.lng, this.state.lat],
+      zoom: this.state.zoom
+    });
+    map.on("move", () => {
+      this.setState({
+        lng: map.getCenter().lng.toFixed(4),
+        lat: map.getCenter().lat.toFixed(4),
+        zoom: map.getZoom().toFixed(2)
+      });
+    });
+  }
+  render() {
+    return (
+      <div>
+        <div className="sidebarStyle">
+          <div>
+            Longitude: {this.state.lng} | Latitude: {this.state.lat} | Zoom:{" "}
+            {this.state.zoom}
+          </div>
+        </div>
+
+        <div ref={el => (this.mapContainer = el)} className="mapContainer" />
+      </div>
+    );
+  }
 }
 
 export default App;
